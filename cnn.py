@@ -7,7 +7,7 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 
-IMG_SIZE = 256
+IMG_SIZE = 64
 
 def load_and_preprocess_image(image_path):
     image = cv2.imread(image_path)
@@ -26,8 +26,8 @@ def prepare_image_dataset(image_dir, label):
         labels.append(label)
     return np.array(images), np.array(labels)
 
-blurry_images, blurry_labels = prepare_image_dataset('blur', 0)
-non_blurry_images, non_blurry_labels = prepare_image_dataset('not_blur', 1)
+blurry_images, blurry_labels = prepare_image_dataset('train_blur', 0)
+non_blurry_images, non_blurry_labels = prepare_image_dataset('train_not_blur', 1)
 
 images = np.concatenate([blurry_images, non_blurry_images], axis=0)
 labels = np.concatenate([blurry_labels, non_blurry_labels], axis=0)
@@ -46,7 +46,7 @@ model = Sequential([
 
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-model.fit(X_train, y_train, epochs=5, validation_data=(X_test, y_test))
+model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
 
 loss, accuracy = model.evaluate(X_test, y_test)
 print(f"Accuracy: {accuracy}")
