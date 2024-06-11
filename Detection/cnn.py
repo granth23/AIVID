@@ -2,7 +2,6 @@ import os
 import cv2
 import numpy as np
 from sklearn.model_selection import train_test_split
-
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
@@ -26,8 +25,8 @@ def prepare_image_dataset(image_dir, label):
         labels.append(label)
     return np.array(images), np.array(labels)
 
-blurry_images, blurry_labels = prepare_image_dataset('train_blur', 0)
-non_blurry_images, non_blurry_labels = prepare_image_dataset('train_not_blur', 1)
+blurry_images, blurry_labels = prepare_image_dataset('blur', 0)
+non_blurry_images, non_blurry_labels = prepare_image_dataset('not_blur', 1)
 
 images = np.concatenate([blurry_images, non_blurry_images], axis=0)
 labels = np.concatenate([blurry_labels, non_blurry_labels], axis=0)
