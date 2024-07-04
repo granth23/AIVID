@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Image Augmentation</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script>
+    function refreshImage(imageId) {
+      var img = document.getElementById('resultImage' + imageId);
+      var timestamp = new Date().getTime();
+      img.src = "{{ url_for('static', filename='samples/result') }}" + imageId + ".jpg?" + timestamp;
+    }
+
+    function submitForm(imageId) {
+      var xhr = new XMLHttpRequest();
+      var formData = new FormData(document.getElementById('blurForm' + imageId));
+      xhr.open('POST', '/' + imageId, true);
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          refreshImage(imageId);
+        }
+      };
+      xhr.send(formData);
+    }
+
+    function updateSliderValue(value, imageId) {
+      document.getElementById('currentValue' + imageId).textContent = value;
+      submitForm(imageId);
+    }
+  </script>
+
+  <style>
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-range {
+      width: 80%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5">
+    <h1>Image Augmentation</h1>
+    <div id="original">
+      <center>
+        <h3>Original Image</h3>
+        <img src="{{ url_for('static', filename='samples/original.jpg') }}" class="img-fluid mb-3 w-30">
+      </center>
+    </div>
+    <div class="row">
+      {% for limit_type, config in augmentation_labels.items() %}
+      <div class="col-md-6">
+        <h3>{{ config.label }}</h3>
+        <img id="resultImage{{ loop.index }}" src="{{ url_for('static', filename='samples/result' + loop.index|string + '.jpg') }}" class="img-fluid mb-3 w-100">
+        <form id="blurForm{{ loop.index }}" class="text-center">
+          <div class="slider-label">
+            <span id="minValue{{ loop.index }}">{{ config.min }}</span>
+            <input type="range" name="limit" min="{{ config.min }}" max="{{ config.max }}" step="{{ config.step }}" value="{{ config.value }}" class="form-range" id="sigmaRange{{ loop.index }}"
+              onchange="updateSliderValue(this.value, {{ loop.index }});">
+            <span id="maxValue{{ loop.index }}">{{ config.max }}</span>
+          </div>
+          <p>Current Value: <span id="currentValue{{ loop.index }}">{{ config.value }}</span></p>
+          <input type="hidden" name="limit_type" value="{{ limit_type }}">
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</body>
+
+</html>
