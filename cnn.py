@@ -12,7 +12,7 @@ def load_and_preprocess_image(image_path):
     image = cv2.imread(image_path)
     image = cv2.resize(image, (IMG_SIZE, IMG_SIZE))
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    image = image / 255.0  # Normalize to [0, 1]
+    image = image / 255.0
     return image
 
 def prepare_image_dataset(image_dir, label):
@@ -46,7 +46,7 @@ model = Sequential([
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
 model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
-model.save('model.h5')
+model.save('cnn_model.h5')
 
 loss, accuracy = model.evaluate(X_test, y_test)
 print(f"Accuracy: {accuracy}")
